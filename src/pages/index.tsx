@@ -37,8 +37,13 @@ export default function Home() {
 
   useEffect(() => {
     if (searchQuery === "") return;
-
-    searchMusics(searchQuery).then((result) => setSearchResults(result));
+    const asyncSearchAndSetMusics = async () => {
+      const currentSearchQuery = searchQuery;
+      const result = await searchMusics(searchQuery);
+      if (currentSearchQuery !== searchQuery) return;
+      setSearchResults(result);
+    };
+    asyncSearchAndSetMusics();
   }, [searchQuery]);
 
   useEffect(() => {
