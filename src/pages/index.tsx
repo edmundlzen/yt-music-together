@@ -61,13 +61,15 @@ export default function Home() {
         </style>
       </Head>
       <main
-        className="flex h-screen flex-col items-center justify-center bg-black p-24 text-white"
+        className="flex h-screen flex-col items-center justify-center bg-black text-white md:p-24"
         onClick={() => setFirstInteractionDone(true)}
       >
         {!firstInteractionDone ? (
-          <div className="text-3xl font-semibold">Click anywhere to start</div>
+          <div className="text-center text-3xl font-semibold">
+            Click anywhere to start
+          </div>
         ) : (
-          <div className="flex w-4/5 flex-col rounded-md bg-white bg-opacity-10 text-center">
+          <div className="flex w-11/12 flex-col rounded-md bg-white bg-opacity-10">
             <div className="flex gap-x-3 p-2">
               <img
                 src={currentPlayingSong?.thumbnailUrl}
@@ -75,16 +77,18 @@ export default function Home() {
                 className="h-24 w-24"
               />
               <div className="flex flex-col items-start">
-                <p className="max-w-72">{currentPlayingSong?.title}</p>
-                <p className="max-w-72 text-sm opacity-80">
+                <p className="max-w-72 text-sm md:text-base">
+                  {currentPlayingSong?.title}
+                </p>
+                <p className="max-w-72 text-xs opacity-80 md:text-sm">
                   {currentPlayingSong?.album}
                 </p>
-                <p className="max-w-72 text-sm opacity-80">
+                <p className="max-w-72 text-xs opacity-80 md:text-sm">
                   {currentPlayingSong?.artists
                     ?.map((artist) => artist.name)
                     .join(", ")}
                 </p>
-                <p className="max-w-72 text-sm opacity-80">
+                <p className="max-w-72 text-xs opacity-80 md:text-sm">
                   {new Date(pos * 1000).toISOString().slice(14, 19)}/
                   {new Date(duration * 1000).toISOString().slice(14, 19)}
                 </p>
