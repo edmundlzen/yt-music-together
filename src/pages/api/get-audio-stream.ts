@@ -13,9 +13,6 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
     {
       filter: "audioonly",
       quality: "highestaudio",
-      requestOptions: {
-        agent: null,
-      },
     }
   );
 
