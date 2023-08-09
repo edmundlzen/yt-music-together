@@ -26,7 +26,10 @@ export default async function handler(
     snapshot.val()
   )) as QueuedMusicVideo[];
 
-  if (currentQueue.some((q) => q.song.youtubeId === song.youtubeId)) {
+  if (
+    currentQueue &&
+    currentQueue.some((q) => q.song.youtubeId === song.youtubeId)
+  ) {
     return res.status(400).json({ error: "Song already in queue" });
   }
 
