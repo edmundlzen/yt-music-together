@@ -94,7 +94,7 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    // void fetch("/api/update-queue");
+    fetch("/api/update-queue");
     const currentPlayingSongRef = ref(db, "currentPlaying");
     onValue(currentPlayingSongRef, (snapshot) => {
       const data = snapshot.val();
@@ -124,7 +124,7 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    // fetch("/api/update-queue");
+    fetch("/api/update-queue");
   }, []);
 
   const queueSong = async (song: MusicVideo) => {
@@ -139,7 +139,7 @@ export default function Home() {
       },
     });
 
-    // await fetch("/api/update-queue");
+    await fetch("/api/update-queue");
   };
 
   const onPlayerReady: YouTubeProps["onReady"] = (event) => {
@@ -176,7 +176,7 @@ export default function Home() {
             }}
             onReady={onPlayerReady}
             onEnd={() => {
-              // void fetch("/api/update-queue");
+              fetch("/api/update-queue");
             }}
             className="invisible h-0 w-0"
           />
