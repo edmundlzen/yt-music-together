@@ -335,9 +335,28 @@ export default function Home() {
               >
                 Manual update queue
               </button>
+              <button
+                className={
+                  "border border-white border-opacity-20 p-2 transition-all hover:scale-95" +
+                  (loading ? " cursor-not-allowed opacity-50" : "")
+                }
+                onClick={() => {
+                  const newName = prompt("Set a new name");
+                  if (newName && newName.trim().length > 0) {
+                    localStorage.setItem("userId", newName);
+                    setUserId(newName);
+                  }
+                }}
+                disabled={loading}
+              >
+                Tukar nama
+              </button>
             </div>
           </div>
         )}
+        <div className="absolute bottom-2 left-2 text-xs opacity-30">
+          ID: <b>{userId}</b>
+        </div>
       </main>
     </>
   );
