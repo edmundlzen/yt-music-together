@@ -277,6 +277,9 @@ export default function Home() {
                   />
                 ))}
               </div>
+              <button className="border border-white border-opacity-20 p-2 transition-all hover:scale-95">
+                Skip
+              </button>
             </div>
           </div>
         )}
