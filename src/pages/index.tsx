@@ -2,6 +2,7 @@ import { get, onValue, ref } from "firebase/database";
 import Head from "next/head";
 import { MusicVideo } from "node-youtube-music";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { toast } from "react-toastify";
 import { useGlobalAudioPlayer } from "react-use-audio-player";
 import YouTube, { YouTubeProps, YouTubePlayer } from "react-youtube";
 import useAudioTime from "~/hooks/useAudioTime";
@@ -129,6 +130,18 @@ export default function Home() {
   }, []);
 
   const queueSong = async (song: MusicVideo) => {
+    if (
+      currentPlayingSong &&
+      currentPlayingSong?.song.youtubeId === song.youtubeId
+    ) {
+      toast.error("This song is already playing, bodoh");
+      return;
+    } else if (
+      queue?.some((queuedSong) => queuedSong.song.youtubeId === song.youtubeId)
+    ) {
+      toast.error("Dey this one alrd queued la");
+      return;
+    }
     setLoading(true);
     await fetch("/api/queue-song", {
       method: "POST",
@@ -338,6 +351,7 @@ const SongCard = ({
   songInfo: MusicVideo;
   onClick?: () => void;
   queuedBy?: string;
+  onClickRemove?: () => void;
 }) => {
   return (
     <div
