@@ -29,6 +29,7 @@ export default function Home() {
   const [currentPlayingStartTime, setCurrentPlayingStartTime] =
     useState<number>(0);
   const [timePlayed, setTimePlayed] = useState<number>(0);
+  const [loading, setLoading] = useState<boolean>(false);
   const startAtTime = useMemo(
     () => Math.round((Date.now() - currentPlayingStartTime) / 1000),
     [currentPlayingStartTime]
@@ -94,7 +95,7 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    fetch("/api/update-queue");
+    updateQueue();
     const currentPlayingSongRef = ref(db, "currentPlaying");
     onValue(currentPlayingSongRef, (snapshot) => {
       const data = snapshot.val();
@@ -124,10 +125,11 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    fetch("/api/update-queue");
+    updateQueue();
   }, []);
 
   const queueSong = async (song: MusicVideo) => {
+    setLoading(true);
     await fetch("/api/queue-song", {
       method: "POST",
       body: JSON.stringify({
@@ -138,8 +140,14 @@ export default function Home() {
         "Content-Type": "application/json",
       },
     });
+    await updateQueue();
+    setLoading(false);
+  };
 
-    await fetch("/api/update-queue");
+  const updateQueue = async (forceSkip = false) => {
+    setLoading(true);
+    await fetch("/api/update-queue" + (forceSkip ? "?forceSkip=true" : ""));
+    setLoading(false);
   };
 
   const onPlayerReady: YouTubeProps["onReady"] = (event) => {
@@ -176,7 +184,7 @@ export default function Home() {
             }}
             onReady={onPlayerReady}
             onEnd={() => {
-              fetch("/api/update-queue");
+              updateQueue();
             }}
             className="invisible h-0 w-0"
           />
@@ -236,7 +244,19 @@ export default function Home() {
                 className="h-16 bg-black bg-opacity-50 p-4 text-white"
                 placeholder="Search for a song"
               />
-              <div className="h-full max-h-96 overflow-y-auto">
+              <div className="relative h-full max-h-96 overflow-y-auto">
+                <div
+                  className={
+                    "absolute z-10 flex h-full w-full items-center justify-center bg-black bg-opacity-80 transition-all" +
+                    (loading ? " scale-100" : " scale-0")
+                  }
+                >
+                  <div className="lds-grid">
+                    {Array.from({ length: 9 }).map((_, i) => (
+                      <div key={i} />
+                    ))}
+                  </div>
+                </div>
                 {searchQuery ? (
                   searchResults.map((result) => (
                     // <div
@@ -277,8 +297,30 @@ export default function Home() {
                   />
                 ))}
               </div>
-              <button className="border border-white border-opacity-20 p-2 transition-all hover:scale-95">
+              <button
+                className={
+                  "border border-white border-opacity-20 p-2 transition-all hover:scale-95" +
+                  (loading ? " cursor-not-allowed opacity-50" : "")
+                }
+                onClick={() => {
+                  setLoading(true);
+                  updateQueue(true);
+                }}
+                disabled={loading}
+              >
                 Skip
+              </button>
+              <button
+                className={
+                  "border border-white border-opacity-20 p-2 transition-all hover:scale-95" +
+                  (loading ? " cursor-not-allowed opacity-50" : "")
+                }
+                onClick={() => {
+                  updateQueue();
+                }}
+                disabled={loading}
+              >
+                Manual update queue
               </button>
             </div>
           </div>
