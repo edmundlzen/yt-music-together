@@ -18,6 +18,14 @@ const searchMusics = async (query: string) => {
   return await result.json();
 };
 
+const facts = [
+  "Benjamin's true name is actually 伟哥",
+  "Choon Hong's favorite food is unsurprisingly sushi",
+  "Yi Fan is not actually gay",
+  "Zen An may actually be not gay",
+  "The song 'STK Glorious' was actually originally written as the theme song for 'Ultraman'",
+];
+
 export default function Home() {
   const [firstInteractionDone, setFirstInteractionDone] =
     useState<boolean>(false);
@@ -36,6 +44,10 @@ export default function Home() {
     [currentPlayingStartTime]
   );
   const youtubePlayerRef = useRef<YouTubePlayer>(null);
+  const factOfTheDay = useMemo(() => {
+    const randomIndex = Math.floor(Math.random() * facts.length);
+    return facts[randomIndex];
+  }, []);
 
   // const { load, play, isLoading, duration, stop } = useGlobalAudioPlayer();
   // const pos = useAudioTime();
@@ -223,6 +235,9 @@ export default function Home() {
         className="flex h-screen flex-col items-center justify-center bg-black text-white md:p-24"
         onClick={() => setFirstInteractionDone(true)}
       >
+        <div className="absolute top-2 cursor-crosshair select-none text-xs font-semibold opacity-20 transition-all hover:scale-105 hover:opacity-100">
+          Did you know? {factOfTheDay}
+        </div>
         {firstInteractionDone && (
           <YouTube
             key={currentPlayingSong?.song.youtubeId}
@@ -378,7 +393,7 @@ export default function Home() {
         )}
         <div
           onClick={() => changeName()}
-          className="absolute bottom-2 left-2 cursor-pointer select-none text-xs opacity-30 transition-all hover:animate-pulse hover:opacity-100"
+          className="absolute bottom-2 left-2 cursor-pointer select-none text-xs opacity-30 transition-all hover:opacity-100"
         >
           ID: <b>{userId}</b>
         </div>
