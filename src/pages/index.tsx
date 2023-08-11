@@ -94,7 +94,7 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    void fetch("/api/update-queue");
+    // void fetch("/api/update-queue");
     const currentPlayingSongRef = ref(db, "currentPlaying");
     onValue(currentPlayingSongRef, (snapshot) => {
       const data = snapshot.val();
@@ -124,7 +124,7 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    fetch("/api/update-queue");
+    // fetch("/api/update-queue");
   }, []);
 
   const queueSong = async (song: MusicVideo) => {
@@ -139,7 +139,7 @@ export default function Home() {
       },
     });
 
-    await fetch("/api/update-queue");
+    // await fetch("/api/update-queue");
   };
 
   const onPlayerReady: YouTubeProps["onReady"] = (event) => {
@@ -176,7 +176,7 @@ export default function Home() {
             }}
             onReady={onPlayerReady}
             onEnd={() => {
-              void fetch("/api/update-queue");
+              // void fetch("/api/update-queue");
             }}
             className="invisible h-0 w-0"
           />
@@ -239,16 +239,21 @@ export default function Home() {
               <div className="h-full max-h-96 overflow-y-auto">
                 {searchQuery ? (
                   searchResults.map((result) => (
-                    <div
+                    // <div
+                    //   key={result.youtubeId}
+                    //   className="flex h-24 cursor-pointer bg-cover bg-center transition-all hover:scale-95"
+                    //   style={{ backgroundImage: `url(${result.thumbnailUrl})` }}
+                    //   onClick={() => queueSong(result)}
+                    // >
+                    //   <div className="flex w-full items-center justify-center bg-opacity-50 bg-gradient-to-t from-gray-900 to-transparent backdrop-blur-sm">
+                    //     {result.title}
+                    //   </div>
+                    // </div>
+                    <SongCard
                       key={result.youtubeId}
-                      className="flex h-24 cursor-pointer bg-cover bg-center transition-all hover:scale-95"
-                      style={{ backgroundImage: `url(${result.thumbnailUrl})` }}
+                      songInfo={result}
                       onClick={() => queueSong(result)}
-                    >
-                      <div className="flex w-full items-center justify-center bg-opacity-50 bg-gradient-to-t from-gray-900 to-transparent backdrop-blur-sm">
-                        {result.title}
-                      </div>
-                    </div>
+                    />
                   ))
                 ) : (
                   <div className="flex h-full items-center justify-center text-3xl font-semibold">
@@ -265,7 +270,11 @@ export default function Home() {
               </p>
               <div className="h-full overflow-y-auto">
                 {queue?.map((song) => (
-                  <SongCard key={song.song.youtubeId} songInfo={song} />
+                  <SongCard
+                    key={song.song.youtubeId}
+                    songInfo={song.song}
+                    queuedBy={song.userId}
+                  />
                 ))}
               </div>
             </div>
@@ -276,21 +285,37 @@ export default function Home() {
   );
 }
 
-const SongCard = ({ songInfo }: { songInfo: QueuedMusicVideo }) => {
+const SongCard = ({
+  songInfo,
+  onClick,
+  queuedBy,
+}: {
+  songInfo: MusicVideo;
+  onClick?: () => void;
+  queuedBy?: string;
+}) => {
   return (
-    <div className="flex gap-x-3 p-2">
-      <img src={songInfo?.song.thumbnailUrl} alt="" className="h-24 w-24" />
+    <div
+      className={
+        "flex gap-x-3 p-2" +
+        (onClick ? " cursor-pointer transition-all hover:scale-95" : "")
+      }
+      onClick={onClick}
+    >
+      <img src={songInfo?.thumbnailUrl} alt="" className="h-24 w-24" />
       <div className="flex flex-col items-start">
-        <p className="max-w-72 text-xs md:text-sm">{songInfo?.song.title}</p>
+        <p className="max-w-72 text-xs md:text-sm">{songInfo?.title}</p>
         <p className="max-w-72 text-xs opacity-80 md:text-xs">
-          {songInfo?.song.album}
+          {songInfo?.album}
         </p>
         <p className="max-w-72 text-xs opacity-80 md:text-xs">
-          {songInfo?.song.artists?.map((artist) => artist.name).join(", ")}
+          {songInfo?.artists?.map((artist) => artist.name).join(", ")}
         </p>
-        <p className="max-w-72 mt-auto text-xs opacity-80 md:text-xs">
-          Queued by {songInfo?.userId}
-        </p>
+        {queuedBy && (
+          <p className="max-w-72 mt-auto text-xs opacity-80 md:text-xs">
+            Queued by {queuedBy}
+          </p>
+        )}
       </div>
     </div>
   );
