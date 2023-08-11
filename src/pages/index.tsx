@@ -163,6 +163,44 @@ export default function Home() {
     setLoading(false);
   };
 
+  const changeName = () => {
+    const newName = prompt("Set a new name");
+    if (newName && newName.trim().length > 0) {
+      localStorage.setItem("userId", newName);
+      setUserId(newName);
+    }
+  };
+
+  const triviaTime = () => {
+    alert(
+      "You have stumbled upon a secret area! Answer correctly to get some interesting facts! (Come back occasionally for new questions)"
+    );
+    const triviaQuestions = [
+      {
+        q: "Who does choon hong like? (as a friend) (hint: type of food) (hint 2: starts with s)",
+        a: "sushi",
+        trivia: "Fun fact: choon hong is a sushi lover and pro sushi king",
+      },
+      {
+        q: "Who is yifan best female friend? (hint: 2 same word repeated with space in between) (hint 2: total 6 letters, excluding space)",
+        a: "hui hui",
+        trivia:
+          "Fun fact: Yi fan actually set xxx name as h_i h_i in his phone",
+      },
+    ] as { q: string; a: string; trivia: string }[];
+    const triviaQuestion = triviaQuestions[
+      Math.floor(Math.random() * triviaQuestions.length)
+    ] as { q: string; a: string; trivia: string };
+    const password = prompt(triviaQuestion.q);
+
+    if (password?.toLowerCase() === triviaQuestion.a.toLowerCase()) {
+      toast.success("Correct!");
+      toast.info(triviaQuestion.trivia);
+    } else {
+      toast.error("Wrong!");
+    }
+  };
+
   const onPlayerReady: YouTubeProps["onReady"] = (event) => {
     youtubePlayerRef.current = event.target;
     event.target.seekTo(
@@ -335,28 +373,21 @@ export default function Home() {
               >
                 Manual update queue
               </button>
-              <button
-                className={
-                  "border border-white border-opacity-20 p-2 transition-all hover:scale-95" +
-                  (loading ? " cursor-not-allowed opacity-50" : "")
-                }
-                onClick={() => {
-                  const newName = prompt("Set a new name");
-                  if (newName && newName.trim().length > 0) {
-                    localStorage.setItem("userId", newName);
-                    setUserId(newName);
-                  }
-                }}
-                disabled={loading}
-              >
-                Tukar nama
-              </button>
             </div>
           </div>
         )}
-        <div className="absolute bottom-2 left-2 text-xs opacity-30">
+        <div
+          onClick={() => changeName()}
+          className="absolute bottom-2 left-2 cursor-pointer select-none text-xs opacity-30 transition-all hover:animate-pulse hover:opacity-100"
+        >
           ID: <b>{userId}</b>
         </div>
+        <button
+          className="absolute bottom-2 right-2 select-none text-xs opacity-30 transition-all hover:animate-spin hover:opacity-80"
+          onClick={() => triviaTime()}
+        >
+          ?
+        </button>
       </main>
     </>
   );
